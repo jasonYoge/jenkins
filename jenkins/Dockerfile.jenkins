@@ -1,0 +1,22 @@
+FROM jenkins/jenkins:alpine
+
+ARG INPUT_JENKINS_USER
+ARG INPUT_JENKINS_PASS
+
+ENV JENKINS_USER $INPUT_JENKINS_USER
+ENV JENKINS_PASS $INPUT_JENKINS_PASS
+
+# Skip initial setup
+ENV JAVA_OPTS -Djenkins.install.runSetupWizard=false
+
+COPY custom.groovy /usr/share/jenkins/ref/init.groovy.d/custom.groovy
+
+# Install plugins by plugin file
+COPY plugins.txt /usr/share/jenkins/plugins.txt
+RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/plugins.txt
+
+USER root
+RUN apk add docker
+USER jenkins
+
+EXPOSE 8080
