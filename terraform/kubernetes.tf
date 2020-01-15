@@ -22,8 +22,20 @@ resource "kubernetes_deployment" "jenkins" {
           name  = "jenkins"
           image = "jasonyoge/jenkins"
 
+          volume_mount {
+            name       = "docker-sock"
+            mount_path = "/var/run/docker.sock"
+          }
+
           port {
             container_port = 8080
+          }
+        }
+
+        volume {
+          name = "docker-sock"
+          host_path {
+            path = "/var/run/docker.sock"
           }
         }
       }
